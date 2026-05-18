@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+.vite
+pnpm-lock.yaml
+public
+*.min.js
+*.min.css
