@@ -216,4 +216,83 @@ GitHub challenges you with encrypted data; only the matching private key can dec
 
 ---
 
+---
+
+## Backend Services
+
+### Backend-as-a-Service (BaaS)
+A category of cloud services that provide pre-built backend infrastructure (database, auth, storage, APIs) so developers can focus on frontend without building/maintaining a backend.
+
+**Examples**: Supabase, Firebase, AWS Amplify, PocketBase
+
+**Pros**: 
+- Faster development (no server setup)
+- Built-in scaling, security, auth
+- Generous free tiers
+
+**Cons**:
+- Vendor lock-in (varies)
+- Less customization than custom backend
+
+---
+
+### Supabase
+Open-source BaaS built on PostgreSQL. Provides:
+- **Database** — managed Postgres
+- **Auth** — built-in user management
+- **Realtime** — websocket-based subscriptions
+- **Storage** — file uploads (like S3)
+- **Edge Functions** — serverless functions (Deno-based)
+- **Auto-generated APIs** — REST + GraphQL from your schema
+
+**Used in Radoro**: Database + Auth + Realtime (we won't use Storage, Edge Functions, or Functions in MVP).
+
+---
+
+## Authentication Tokens
+
+### Database Password vs Publishable Key vs Personal Access Token
+
+Three different "secrets" in Supabase ecosystem — easy to confuse:
+
+| Type | Format | Used For | Where Stored |
+|---|---|---|---|
+| Database Password | random string | Direct DB connection (DBeaver, ORM) | Password manager |
+| Publishable Key | `sb_publishable_...` | Frontend API calls (React app) | `.env.local` |
+| Personal Access Token | `sbp_...` | Supabase CLI authentication | Env variable |
+
+**Key insight**: Each has a different audience and scope. Mixing them up is a common cause of bugs.
+
+---
+
+## Environment Variables
+
+### Concept
+Key-value pairs that exist outside your code, accessible to programs at runtime. Used for:
+- Storing secrets without committing to Git
+- Different config per environment (dev/staging/prod)
+- System-level configuration
+
+### Scope Levels (Windows)
+- **Process** — only the current shell session (lost when closed)
+- **User** — persists for your user account
+- **Machine** — persists for all users (requires admin)
+
+### Vite Convention
+Vite only exposes env variables starting with `VITE_` to client-side code:
+```env
+VITE_SUPABASE_URL=https://...     # accessible in frontend ✅
+SECRET_API_KEY=abc                # NOT accessible in frontend ❌
+```
+**Reason**: Security. Forces developers to explicitly mark what's safe for the browser.
+
+---
+
+### .env Files
+Special files for storing environment variables:
+- `.env` — base config, can be committed
+- `.env.local` — local overrides, **never commit** (in `.gitignore`)
+- `.env.development` / `.env.production` — env-specific configs
+- `.env.example` — template with empty values, **committed** for documentation
+
 ## More concepts will be added as the project progresses.

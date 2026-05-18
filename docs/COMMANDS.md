@@ -249,3 +249,109 @@ git config --global core.eol lf
 ```
 **Purpose**: Configure Git globally to NOT auto-convert line endings, and default to LF.
 **Note**: Alternative to using `.gitattributes`. We chose `.gitattributes` for per-project control.
+
+---
+
+## 4. Supabase Setup
+
+### Install Scoop package manager (PowerShell, one-time)
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm get.scoop.sh | iex
+```
+**Purpose**: Install Scoop, a command-line package manager for Windows. Used to install developer tools cleanly.
+
+---
+
+### Verify Scoop installation
+```powershell
+scoop --version
+```
+
+---
+
+### Add Supabase bucket to Scoop
+```powershell
+scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+```
+**Purpose**: Register the official Supabase Scoop bucket so we can install Supabase CLI.
+
+---
+
+### Install Supabase CLI
+```powershell
+scoop install supabase
+```
+
+---
+
+### Verify Supabase CLI version
+```powershell
+supabase --version
+```
+
+---
+
+### Set Personal Access Token (current session only)
+```powershell
+$env:SUPABASE_ACCESS_TOKEN = "YOUR_TOKEN"
+```
+**Purpose**: Authenticate Supabase CLI for the current PowerShell session.
+
+---
+
+### Set Personal Access Token (permanent, user scope)
+```powershell
+[System.Environment]::SetEnvironmentVariable('SUPABASE_ACCESS_TOKEN', 'YOUR_TOKEN', 'User')
+```
+**Purpose**: Persist the token across PowerShell sessions. Requires PowerShell restart to take effect.
+
+---
+
+### Verify env variable persisted
+```powershell
+[System.Environment]::GetEnvironmentVariable('SUPABASE_ACCESS_TOKEN', 'User')
+```
+
+---
+
+### List Supabase projects (verify auth)
+```powershell
+supabase projects list
+```
+
+---
+
+### Initialize Supabase in project (creates supabase/ folder)
+```powershell
+supabase init
+```
+
+---
+
+### Link local project to Supabase cloud
+```powershell
+supabase link --project-ref YOUR_PROJECT_REF
+```
+**Purpose**: Connect the local `supabase/` folder to the cloud project. Required for migrations.
+
+---
+
+### Install Supabase JS client library
+```bash
+pnpm add @supabase/supabase-js
+```
+**Purpose**: Install the official Supabase client library for use in React app.
+
+---
+
+### Check if a specific file is gitignored
+```bash
+git check-ignore -v <filename>
+```
+**Purpose**: Verify whether a file is being ignored by Git, and show which `.gitignore` rule matches.
+**Example**:
+```bash
+git check-ignore -v .env.local
+# Output: .gitignore:13:*.local   .env.local
+```

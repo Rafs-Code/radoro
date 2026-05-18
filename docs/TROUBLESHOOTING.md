@@ -119,3 +119,114 @@ This is correct behavior — Git is now normalizing existing CRLF files to LF.
 ## Template for Future Errors
 
 ### Error
+
+---
+
+## Step 4: Supabase CLI Login Failed Due to Username with Space
+
+### Error
+
+Unable to create CLI sign-in
+Supabase could not create the CLI sign-in session.
+Error: Unknown error
+
+### Context
+Running `supabase login` opens browser for OAuth authorization, but the page shows "Unable to create CLI sign-in" error.
+
+### Cause
+
+Windows username contains a space (`rafs loq`), which gets included in the auto-generated token name:
+token_name=cli_DESKTOP-5KPP3ML\rafs loq@DESKTOP-5KPP3ML
+↑ space here
+
+Supabase backend doesn't handle this gracefully.
+
+### Solution
+**Option A** (didn't work in our case): Use custom token name flag:
+```powershell
+supabase login --name radoro-cli
+```
+
+**Option B** (worked): Generate Personal Access Token manually from dashboard:
+1. Go to https://supabase.com/dashboard/account/tokens
+2. Click "Generate new token"
+3. Name: `radoro-cli`
+4. Copy the token (`sbp_...`)
+5. Set as environment variable:
+```powershell
+   $env:SUPABASE_ACCESS_TOKEN = "TOKEN_HERE"
+```
+6. Verify with:
+```powershell
+   supabase projects list
+```
+
+### Lesson Learned
+- Windows usernames with spaces cause subtle issues across many developer tools.
+- Personal Access Tokens are a reliable fallback for CI/CD or restricted environments.
+- Always have a non-OAuth authentication method available.
+
+---
+
+## Step 4: Permanent Env Variable Not Loading in New Terminal
+
+### Error
+After setting permanent environment variable, the value was empty when echoed in a new PowerShell session:
+```powershell
+echo $env:SUPABASE_ACCESS_TOKEN
+# (empty output)
+```
+
+### Context
+Set the variable permanent via:
+```powershell
+[System.Environment]::SetEnvironmentVariable('SUPABASE_ACCESS_TOKEN', 'TOKEN', 'User')
+```
+
+### Cause
+PowerShell sessions cache environment variables when started. Opening a "new" terminal inside VS Code doesn't always create a truly fresh session — VS Code may reuse the cached parent environment.
+
+### Solution
+Full restart of VS Code:
+1. Close VS Code completely
+2. Reopen VS Code
+3. Open project folder
+4. Open new terminal
+5. Verify:
+```powershell
+   echo $env:SUPABASE_ACCESS_TOKEN
+```
+
+### Lesson Learned
+- Permanent environment variables require a fresh shell session to load.
+- "New terminal" in VS Code is not always a fresh session — sometimes a full VS Code restart is needed.
+- Use `[System.Environment]::GetEnvironmentVariable('NAME', 'User')` to verify the variable was actually saved to system, independent of current session cache.
+
+---
+
+## Step 4: Console Error 404 on Supabase Test (NOT AN ERROR)
+
+### Error / Warning
+
+Failed to load resource: the server responded with a status of 404 ()
+rkcksearylookrzvztge...?select=*&limit=1:1
+
+### Context
+Appears in browser DevTools Console when testing Supabase connection on first load.
+
+### Cause
+**This is NOT an error.** Our connection test queries a non-existent table (`_test_dummy_table`) intentionally to verify the connection.
+
+- ✅ React → Supabase cloud network request succeeded
+- ✅ Authentication (publishable key) valid
+- ✅ Supabase responded with HTTP 404 (table not found) — expected
+- ✅ Our code catches this as "connection successful" because it confirms the API is reachable
+
+### Solution
+None needed — the 404 is the expected response. The UI displays "✅ Supabase connected successfully!" which is the actual success indicator.
+
+### Lesson Learned
+- HTTP status codes ≠ application errors. A 404 from Supabase API means "endpoint responded, but resource not found" — connection is working.
+- Real connection failures show: CORS errors, network errors, or 401/403 (auth errors).
+- Always interpret errors in the context of what the code is testing.
+
