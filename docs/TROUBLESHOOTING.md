@@ -27,21 +27,95 @@ pnpm add tailwindcss @tailwindcss/vite
 
 ---
 
-## Template for Future Errors
+## Step 3: Typo `git remove` instead of `git remote`
 
 ### Error
 
-### Context
-- What were you doing when it happened?
-- Which step were you in?
-
+$ git remove -v
+git: 'remove' is not a git command. See 'git --help'.
+The most similar command is
+remote
 ### Cause
-[Explain the root cause]
+Typo: `git remove` instead of `git remote`. Git CLI doesn't have a `remove` command.
 
 ### Solution
-[Step-by-step fix]
+Use the correct command:
+```bash
+git remote -v
+```
 
 ### Lesson Learned
-[Takeaway / how to prevent next time]
+- Git CLI suggests similar commands when there's a typo. Always read the hint.
+- Common Git subcommands: `add`, `commit`, `push`, `pull`, `remote`, `branch`, `status`, `log`.
 
 ---
+
+## Step 3: LF/CRLF Line Ending Warnings
+
+### Error / Warning
+
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+... (multiple files)
+
+### Context
+Happened during `git add .` after Prettier formatted files with LF endings, while Windows Git defaults to CRLF.
+
+### Cause
+Cross-platform line ending mismatch:
+- **Prettier config** (`.prettierrc`) — set to `"endOfLine": "lf"` (Linux/Mac style)
+- **Windows Git default** — auto-converts to CRLF (Windows style)
+- Result: Git warns about the conversion
+
+### Solution
+Create `.gitattributes` at project root to enforce LF consistently across all platforms:
+
+text=auto eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.svg text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+
+Then re-normalize:
+```bash
+git reset
+git add --renormalize .
+git add .
+```
+
+After applying `.gitattributes`, the warning direction reversed:
+
+CRLF will be replaced by LF the next time Git touches it
+
+This is correct behavior — Git is now normalizing existing CRLF files to LF.
+
+### Lesson Learned
+- Always include `.gitattributes` in cross-platform projects.
+- Choose ONE line ending style and enforce it everywhere (Prettier + Git + editor).
+- LF is the modern standard, even on Windows. Most modern editors handle both correctly.
+- Line ending warnings are not errors — files still commit, but inconsistency leads to messy diffs.
+
+---
+
+## Template for Future Errors
+
+### Error

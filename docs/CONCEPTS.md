@@ -150,3 +150,70 @@ A specification for commit messages that uses prefixes to indicate change type:
 ---
 
 ## More concepts will be added as the project progresses.
+
+---
+
+## Line Endings
+
+### LF vs CRLF
+Invisible characters at the end of each line in text files:
+- **LF** (`\n`) — Linux/Mac standard
+- **CRLF** (`\r\n`) — Windows standard
+
+When working across operating systems, mixed line endings cause:
+- Messy Git diffs (entire files appear changed when only endings differ)
+- Issues with tools that expect specific endings
+- Inconsistent formatting in shared codebases
+
+**Modern best practice**: Use **LF everywhere**, even on Windows. Configured via:
+1. `.prettierrc` — `"endOfLine": "lf"` for code formatting
+2. `.gitattributes` — `* text=auto eol=lf` for Git operations
+3. Editor settings — set default to LF
+
+---
+
+### `.gitattributes`
+A Git config file (at repo root) that defines per-file attributes, including:
+- Line ending normalization (`eol=lf`, `eol=crlf`)
+- Marking files as binary (`*.png binary`)
+- Diff and merge strategies
+- Export filters
+
+**Difference from `.gitignore`**: 
+- `.gitignore` — files to **ignore** from Git
+- `.gitattributes` — **rules for how Git handles** tracked files
+
+---
+
+## Git Authentication
+
+### HTTPS vs SSH
+
+Two ways to authenticate with GitHub when pushing/pulling:
+
+**HTTPS**:
+- URL format: `https://github.com/user/repo.git`
+- Auth: Username + Personal Access Token (PAT) or browser popup
+- Pros: Simple setup, works behind firewalls
+- Cons: Need to authenticate repeatedly (or cache credentials)
+
+**SSH**:
+- URL format: `git@github.com:user/repo.git`
+- Auth: SSH key pair (private key on your machine, public key on GitHub)
+- Pros: Setup once, works seamlessly forever; more secure
+- Cons: Slightly more complex initial setup; some firewalls block SSH
+
+**Used in Radoro**: SSH (configured before project setup).
+
+---
+
+### SSH Key Pair
+A cryptographic authentication method consisting of:
+- **Private key** (kept on your machine, never shared) — proves your identity
+- **Public key** (uploaded to GitHub) — verifies your identity
+
+GitHub challenges you with encrypted data; only the matching private key can decrypt it. No passwords needed.
+
+---
+
+## More concepts will be added as the project progresses.

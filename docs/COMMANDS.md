@@ -201,3 +201,51 @@ git push -u origin main
 git push
 ```
 **Purpose**: Push committed changes to the linked remote (after upstream is set).
+
+---
+
+### Test Git status
+```bash
+git status
+```
+**Purpose**: Show the status of files in the working directory:
+- Untracked files (red) — new files not yet added
+- Modified files (red) — tracked files with changes
+- Staged files (green) — files ready to commit
+- Branch info — current branch and sync status with remote
+
+---
+
+### Reset staged files
+```bash
+git reset
+```
+**Purpose**: Unstage all files (move them back from staging area to working directory). Files are NOT deleted, just unstaged.
+**Use case**: Used after a typo or mistake to start over.
+
+---
+
+### Re-normalize files according to .gitattributes
+```bash
+git add --renormalize .
+```
+**Purpose**: Re-read all files using `.gitattributes` rules and re-stage them. Useful when adding `.gitattributes` after files already exist.
+
+---
+
+### Test SSH connection to GitHub
+```bash
+ssh -T git@github.com
+```
+**Purpose**: Verify that your SSH key is properly configured and recognized by GitHub.
+**Success output**: `Hi <username>! You've successfully authenticated...`
+
+---
+
+### Configure Git line endings (global)
+```bash
+git config --global core.autocrlf false
+git config --global core.eol lf
+```
+**Purpose**: Configure Git globally to NOT auto-convert line endings, and default to LF.
+**Note**: Alternative to using `.gitattributes`. We chose `.gitattributes` for per-project control.

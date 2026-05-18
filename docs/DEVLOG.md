@@ -1,132 +1,54 @@
-# Radoro — Development Log
-
-> A chronological log of development progress for the Radoro Pomodoro PWA.
-> Each entry covers what was built, decisions made, and links to related docs.
-
----
-
-## 📅 Phase 0 — Planning & Setup
-
-### Project Overview
-- **Name**: Radoro
-- **Description**: Personal Pomodoro PWA with dark purple theme, custom timer presets, task list, stats, and animations.
-- **Tech Stack**: React + TypeScript + Vite + Tailwind CSS + Supabase + Zustand + Howler.js + date-fns
-- **Hosting**: Vercel
-- **Repository**: github.com/Rafs-Code/radoro
-- **Database**: Supabase (PostgreSQL)
-- **Target**: Personal use, accessible on desktop (browser) & mobile (PWA install)
-
-### Key Decisions
-| Topic | Decision | Rationale |
-|---|---|---|
-| Database | Supabase | Modern, SQL-based, generous free tier, learning value |
-| Auth strategy | Supabase Auth | Built-in, multi-device sync |
-| Schema management | GitHub Integration | Learn professional migration workflow |
-| Local path | `C:\Projects\radoro` | Avoid spaces in Windows username path |
-| Git workflow | Main only + Conventional Commits | Simple but professional |
-| Default language | English (with Indonesian option) | Broader appeal, learning value |
-
----
-
-## 📅 Phase 1 — MVP Development
-
-### Step 1: Project Initialization
-**Date**: [fill in]
-
-**What was done**:
-- Created Vite project with React + TypeScript template
-- Installed dependencies with pnpm
-- Verified dev server runs at `http://localhost:5173/`
-
-**Commands used**: See [COMMANDS.md → Section 1](./COMMANDS.md#1-project-initialization)
-
-**Files created/modified**: Default Vite template
-
-**Outcome**: ✅ Vite dev server running with default React template
-
----
-
-### Step 2: Tailwind CSS Setup
-**Date**: [fill in]
-
-**What was done**:
-- Installed Tailwind CSS v4 with Vite plugin
-- Configured `vite.config.ts` to use Tailwind plugin
-- Replaced `src/index.css` with Tailwind import
-- Cleared `src/App.css`
-- Updated `App.tsx` with first Tailwind-styled component (purple theme test)
-
-**Commands used**: See [COMMANDS.md → Section 2](./COMMANDS.md#2-tailwind-css-setup)
-
-**Files created/modified**:
-- `vite.config.ts` — Added Tailwind plugin
-- `src/index.css` — Replaced with `@import "tailwindcss";`
-- `src/App.css` — Cleared
-- `src/App.tsx` — Replaced with Radoro splash screen test
-
-**Outcome**: ✅ Tailwind classes working, purple theme rendered correctly
-
----
-
 ### Step 3: Code Quality Tools & Git Setup
-**Date**: [fill in]
+**Date**: [fill in tanggal hari ini]
 
 **What was done**:
 - Installed Prettier as dev dependency
-- Created `.prettierrc` with style preferences (no semicolons, single quotes, 2-space tabs, etc.)
-- Created `.prettierignore` to skip generated files
+- Created `.prettierrc` with style preferences (no semicolons, single quotes, 2-space tabs, LF line endings)
+- Created `.prettierignore` to skip generated files (node_modules, dist, etc.)
 - Installed `eslint-config-prettier` for ESLint-Prettier integration
 - Updated `eslint.config.js` to include `prettierConfig`
-- Updated VS Code settings for format-on-save
+- Updated VS Code user settings for format-on-save with Prettier as default formatter
 - Added `lint:fix`, `format`, `format:check` scripts to `package.json`
-- Initialized Git repository
-- Connected to GitHub remote `Rafs-Code/radoro`
+- Created `.gitattributes` to enforce LF line endings (cross-platform consistency)
+- Initialized Git repository with `main` as default branch
+- Connected to GitHub remote `Rafs-Code/radoro` via SSH
 - Made initial commit and pushed to `main`
 
 **Commands used**: See [COMMANDS.md → Section 3](./COMMANDS.md#3-code-quality--git-setup)
 
 **Files created/modified**:
-- `.prettierrc` — Prettier config
+- `.prettierrc` — Prettier config (no semis, single quotes, LF, 100 char width)
 - `.prettierignore` — Prettier ignore list
+- `.gitattributes` — Git line ending rules (force LF for text files)
 - `eslint.config.js` — Added Prettier integration
-- `package.json` — Added scripts
-- VS Code `settings.json` (global) — Format on save
+- `package.json` — Added lint:fix, format, format:check scripts
+- VS Code `settings.json` (global) — Auto-format on save with Prettier
 
-**Errors encountered**: See [TROUBLESHOOTING.md → Step 3](./TROUBLESHOOTING.md#step-3-typo-in-tailwind-package-name)
+**Errors encountered**: See [TROUBLESHOOTING.md → Step 3](./TROUBLESHOOTING.md)
+- Typo in tailwind package name (`@tainwindcss` vs `@tailwindcss`)
+- Typo `git remove` instead of `git remote`
+- LF/CRLF line ending warnings (resolved with `.gitattributes`)
 
-**Outcome**: ✅ Code auto-formats on save, ESLint runs clean, project pushed to GitHub
+**Concepts introduced**: See [CONCEPTS.md](./CONCEPTS.md)
+- Conventional Commits
+- LF vs CRLF line endings
+- SSH vs HTTPS for Git remotes
+- ESLint + Prettier integration pattern
+- `.gitattributes` for cross-platform line ending consistency
+
+**Outcome**: 
+- ✅ Code auto-formats on save
+- ✅ ESLint runs clean (no errors/warnings)
+- ✅ Project pushed to GitHub via SSH authentication
+- ✅ Documentation structure (docs/) established
+- ✅ Consistent LF line endings enforced via `.gitattributes`
 
 ---
 
 ### Step 4: Supabase Project Creation & CLI Setup
-**Status**: 🚧 In Progress
+**Status**: 🚧 Next up
 
 [Will be filled in as we progress]
 
----
-
-## 📊 Progress Tracker
-
-- [x] Phase 0 — Planning
-- [ ] Phase 1 — MVP (In Progress)
-  - [x] Step 1: Vite + React + TS
-  - [x] Step 2: Tailwind CSS
-  - [x] Step 3: ESLint, Prettier, Git
-  - [ ] Step 4: Supabase project & CLI
-  - [ ] Step 5: Environment variables
-  - [ ] Step 6: Database schema (first migration)
-  - [ ] Step 7: Supabase JS client integration
-  - [ ] Step 8: PWA setup (vite-plugin-pwa)
-  - [ ] Step 9: Folder structure & state management
-  - [ ] Step 10: Core timer functionality
-  - [ ] Step 11: Deploy to Vercel
-- [ ] Phase 2 — Core Features
-- [ ] Phase 3 — Enhancement
-- [ ] Phase 4 — Polish
-
----
-
-## 📚 Related Docs
-- [COMMANDS.md](./COMMANDS.md) — Terminal commands reference
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — Errors & solutions
-- [CONCEPTS.md](./CONCEPTS.md) — Technical concepts explained
+- [x] Step 3: ESLint, Prettier, Git ✅
+- [ ] Step 4: Supabase project & CLI ← **NEXT**
