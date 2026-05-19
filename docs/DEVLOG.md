@@ -140,7 +140,61 @@
 
 ---
 
-### Step 6: Auth Setup & TypeScript Types
+### Step 6: TypeScript Types + Auth Setup
+**Date**: [fill in tanggal hari ini]
+
+**What was done**:
+- Generated TypeScript types from Supabase schema: `supabase gen types typescript --linked`
+- Updated `src/lib/supabase.ts` to use `<Database>` generic for type safety
+- Created `src/contexts/AuthContext.tsx` with:
+  - React Context for auth state (session, user, loading)
+  - `signUp`, `signIn`, `signOut` methods
+  - `onAuthStateChange` listener for session persistence
+  - `useAuth()` custom hook
+- Wrapped `<App />` with `<AuthProvider>` in `main.tsx`
+- Built UI for Sign Up / Sign In / Logged-in view with Tailwind purple theme
+- Configured Supabase Authentication:
+  - Disabled "Confirm email" (Free Plan email rate limit too strict for dev)
+- Tested full auth flow:
+  - Sign up with valid email → user created in `auth.users`
+  - Trigger `on_auth_user_created` auto-creates row in `public.profiles`
+  - Sign out → form returns
+  - Sign in → logged-in view returns
+  - Browser refresh → session persisted
+
+**Commands used**: See [COMMANDS.md → Section 6](./COMMANDS.md#6-typescript-types--auth)
+
+**Files created/modified**:
+- `src/lib/database.types.ts` — Auto-generated TypeScript types (do NOT edit manually)
+- `src/lib/supabase.ts` — Added `<Database>` generic
+- `src/contexts/AuthContext.tsx` — Auth context & provider
+- `src/main.tsx` — Wrapped App with AuthProvider
+- `src/App.tsx` — Auth UI (sign up/in form + logged-in view)
+
+**Errors encountered**: See [TROUBLESHOOTING.md → Step 6](./TROUBLESHOOTING.md)
+- Initially pasted Supabase client code into `database.types.ts` by mistake (circular import error)
+- Email validation rejected `cikur@gmail.com` (Supabase blocks suspicious/test-like patterns)
+- Email rate limit hit (2/h on Free Plan) after multiple signup attempts
+- Resolved by disabling email confirmation
+
+**Concepts introduced**: See [CONCEPTS.md](./CONCEPTS.md)
+- Type-safe Supabase queries with generic `Database` type
+- React Context Pattern for state sharing
+- Custom hooks (`useAuth`)
+- Supabase Auth flow (signUp, signIn, signOut, onAuthStateChange)
+- Session persistence
+- Email confirmation toggle (development vs production)
+
+**Outcome**:
+- ✅ Full authentication flow working end-to-end
+- ✅ Trigger `on_auth_user_created` confirmed working (profile auto-created on signup)
+- ✅ Session persistence works across browser refresh
+- ✅ Type-safe Supabase queries enabled throughout the app
+- ✅ Foundation ready for building feature-specific tables and UI
+
+---
+
+### Step 7: Complete Database Schema (Sessions, Tasks, Settings, Presets, Quotes)
 **Status**: 🚧 Next up
 
 [Will be filled in as we progress]
@@ -148,4 +202,5 @@
 - [x] Step 3: ESLint, Prettier, Git ✅
 - [x] Step 4: Supabase project & CLI ✅
 - [x] Step 5: Database schema (first migration) ✅
-- [ ] Step 6: Supabase JS client integration & Auth ← **NEXT**
+- [x] Step 6: Supabase JS client integration & Auth ✅
+- [ ] Step 7: Complete database schema ← **NEXT**

@@ -264,3 +264,87 @@ This deployed the migration successfully and `profiles` table appeared in Table 
 - Always verify integration settings (especially toggles) **before** pushing important changes.
 - Have a fallback strategy (manual push) when integrations don't work as expected.
 - Don't get stuck investigating issues — workaround first, deep-dive later.
+
+---
+
+## Step 6: Pasted Wrong Content to `database.types.ts`
+
+### Error
+Circular definition of import alias 'Database'.
+
+### Context
+After running `supabase gen types typescript --linked > src/lib/database.types.ts`, the Supabase client code was accidentally pasted into `database.types.ts` instead of `supabase.ts`. This caused the file to import `Database` from itself.
+
+### Cause
+File mix-up when copy-pasting code blocks from instructions.
+
+### Solution
+1. Delete contents of `src/lib/database.types.ts`
+2. Re-run the type generation command:
+```powershell
+   supabase gen types typescript --linked > src/lib/database.types.ts
+```
+3. Verify `src/lib/supabase.ts` contains the client code with `<Database>` generic.
+
+### Lesson Learned
+- **`supabase.ts`** = Supabase client instance
+- **`database.types.ts`** = Auto-generated TypeScript types (DO NOT EDIT)
+- They serve different purposes — never paste content into the wrong file.
+
+---
+
+## Step 6: "Email address is invalid" on Sign Up
+
+### Error
+❌ Email address "cikur@gmail.com" is invalid
+
+### Context
+Tried to sign up with a test-like email pattern.
+
+### Cause
+Supabase has built-in email validation that blocks suspicious patterns:
+- Disposable email services
+- Common test/placeholder patterns
+- Some "looks-like-test" addresses
+
+### Solution
+Use a real-looking email:
+- Real personal email
+- Gmail with `+` alias: `yourname+test1@gmail.com`
+- Realistic domain: `firstname.lastname@outlook.com`
+
+### Lesson Learned
+- Supabase prioritizes deliverability by filtering bad email patterns up front.
+- Always use realistic test emails to avoid validation errors.
+
+---
+
+## Step 6: "email rate limit exceeded" on Sign Up
+
+### Error
+❌ email rate limit exceeded
+
+### Context
+After multiple signup attempts during testing, signup got blocked.
+
+### Cause
+**Free Plan limitation**: Default rate limit for sending emails is **2 emails/hour**, and Supabase sends a confirmation email per signup. Once exceeded, no more signups for ~1 hour.
+
+The rate limit field is **locked** on the Free Plan (cannot be raised via dashboard).
+
+### Solution
+**Disable email confirmation entirely** (development-only solution):
+1. Supabase Dashboard → Authentication → **Sign In / Providers**
+2. Click **Email** provider
+3. Toggle **OFF**: "Confirm email" / "Enable email confirmations"
+4. Save
+
+After this:
+- Sign up no longer sends emails (bypassing rate limit)
+- Users are auto-confirmed instantly
+- Login works immediately after signup
+
+### Lesson Learned
+- Free Plan email rate limits are strict (2/h) and locked.
+- For development, disable email confirmation to avoid frustration.
+- For production, re-enable email confirmation and consider upgrading to Pro Plan for higher rate limits.

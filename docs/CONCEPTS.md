@@ -380,4 +380,105 @@ Database functions that auto-execute on table events (INSERT/UPDATE/DELETE).
 
 ---
 
+---
+
+## TypeScript & Supabase
+
+### Type-Safe Database Queries
+By passing the auto-generated `Database` type as a generic to `createClient`, all queries become type-safe:
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
+const supabase = createClient<Database>(url, key)
+
+// Type-safe!
+const { data } = await supabase
+  .from('profiles')      // TypeScript knows 'profiles' is valid
+  .select('id, username') // Autocomplete on columns
+
+data?.[0].username       // TypeScript knows this is `string | null`
+data?.[0].usrname        // ❌ TypeScript error: column doesn't exist
+```
+
+**Benefits**:
+- ✅ Autocomplete on table names and columns
+- ✅ Catch typos at compile time
+- ✅ Refactoring is safer (rename column = TypeScript flags all usages)
+- ✅ Documentation lives in the types
+
+**Re-generation**: Run `supabase gen types typescript --linked > src/lib/database.types.ts` whenever schema changes.
+
+---
+
+## React Patterns
+
+### Context API
+React's built-in mechanism for sharing state without "prop drilling" (passing props through many components).
+
+**When to use**:
+- Auth state (current user, session)
+- Theme (dark/light)
+- Language/locale
+- Any global app state
+
+**Pattern**:
+```tsx
+// 1. Create context
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+// 2. Provider component
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
+  return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+}
+
+// 3. Wrap app
+<AuthProvider>
+  <App />
+</AuthProvider>
+
+// 4. Use anywhere
+function SomeComponent() {
+  const { user } = useAuth()
+  return <p>{user?.email}</p>
+}
+```
+
+---
+
+### Custom Hooks
+Functions starting with `use` that encapsulate reusable logic. They can call other hooks.
+
+**Why?**
+- ✅ Reusable logic across components
+- ✅ Cleaner component code
+- ✅ Easier testing
+
+**Convention**: Always prefix with `use` (e.g., `useAuth`, `useTimer`, `useTasks`)
+
+---
+
+## Authentication
+
+### Supabase Auth Flow
+1. **Sign Up**: `supabase.auth.signUp({ email, password })` → creates user in `auth.users`
+2. **Sign In**: `supabase.auth.signInWithPassword({ email, password })` → returns session
+3. **Sign Out**: `supabase.auth.signOut()` → clears session
+4. **Listen**: `supabase.auth.onAuthStateChange(callback)` → subscribe to changes
+
+**Session persistence**: By default, Supabase stores the session in `localStorage`. Reloading the page restores the session automatically.
+
+---
+
+### Email Confirmation
+A security feature that requires users to click a link in their email before they can log in.
+
+**Default**: ON
+**Development**: Usually OFF (faster testing, no email setup needed)
+**Production**: SHOULD be ON (prevents spam signups, verifies email ownership)
+
+---
+
 ## More concepts will be added as the project progresses.

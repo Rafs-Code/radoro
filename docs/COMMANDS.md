@@ -397,3 +397,29 @@ git commit --allow-empty -m "chore: trigger deploy"
 git push
 ```
 **Purpose**: Push a commit with no file changes. Useful for re-triggering CI/CD or webhooks.
+
+---
+
+## 6. TypeScript Types & Auth
+
+### Generate TypeScript types from Supabase schema
+```powershell
+supabase gen types typescript --linked > src/lib/database.types.ts
+```
+**Purpose**: Generate TypeScript types from the current cloud database schema. Output redirected to a file in the React app.
+**Re-run**: Whenever the database schema changes (new tables, columns, etc.).
+**Notes**:
+- `--linked` uses the project linked via `supabase link`
+- The output file should never be edited manually — re-generate instead
+- Add this to a script in `package.json` for convenience (e.g., `pnpm types:gen`)
+
+---
+
+### Use type-safe Supabase client
+```typescript
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
+export const supabase = createClient<Database>(url, key)
+```
+**Purpose**: Make all `supabase.from('table_name').select(...)` calls type-safe based on the generated schema types.
