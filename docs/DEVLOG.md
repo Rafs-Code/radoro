@@ -194,7 +194,48 @@
 
 ---
 
-### Step 7: Complete Database Schema (Sessions, Tasks, Settings, Presets, Quotes)
+### Step 7: Complete Database Schema
+**Date**: [tanggal hari ini]
+
+**What was done**:
+- Created migration `create_radoro_schema.sql` with 5 new tables:
+  - `settings` (1:1 with profiles) — user preferences
+  - `presets` (1:many) — saved timer presets
+  - `tasks` (1:many) — user task list
+  - `sessions` (1:many) — pomodoro history
+  - `quotes` (1:many) — custom motivational quotes
+- Added RLS policies for all tables (users can only access own data)
+- Added indexes for query performance (user_id, completed status, started_at)
+- Updated `handle_new_user` trigger to auto-create:
+  - Profile (existing)
+  - Default settings
+  - Default preset "Classic" (25/5/15)
+- Deployed via `supabase db push` (manual, GitHub Integration still pending)
+- Re-generated TypeScript types
+- Added `pnpm types:gen` script for convenience
+
+**Commands used**: See [COMMANDS.md → Section 7](./COMMANDS.md#7-complete-schema)
+
+**Files created/modified**:
+- `supabase/migrations/[TIMESTAMP]_create_radoro_schema.sql` — 5 tables + policies + updated trigger
+- `src/lib/database.types.ts` — Regenerated types
+- `package.json` — Added `types:gen` script
+
+**Concepts introduced**: See [CONCEPTS.md](./CONCEPTS.md)
+- Database indexes
+- One-to-one vs one-to-many relationships
+- Cascading deletes vs SET NULL
+- Composite indexes for query optimization
+
+**Outcome**:
+- ✅ Complete database schema for Radoro
+- ✅ 6 tables total: profiles, settings, presets, tasks, sessions, quotes
+- ✅ Trigger update verified: new user auto-gets profile + settings + default preset
+- ✅ TypeScript types updated and ready to use
+
+---
+
+### Step 8: Folder Structure + Timer UI
 **Status**: 🚧 Next up
 
 [Will be filled in as we progress]
@@ -203,4 +244,5 @@
 - [x] Step 4: Supabase project & CLI ✅
 - [x] Step 5: Database schema (first migration) ✅
 - [x] Step 6: Supabase JS client integration & Auth ✅
-- [ ] Step 7: Complete database schema ← **NEXT**
+- [x] Step 7: Complete database schema ✅
+- [ ] Step 8: Folder structure + Timer UI ← **NEXT**

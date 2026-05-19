@@ -423,3 +423,17 @@ import type { Database } from './database.types'
 export const supabase = createClient<Database>(url, key)
 ```
 **Purpose**: Make all `supabase.from('table_name').select(...)` calls type-safe based on the generated schema types.
+
+---
+
+## 7. Complete Schema
+
+### Use the types:gen script
+```bash
+pnpm types:gen
+```
+**Purpose**: Shortcut for regenerating Supabase types. Defined in `package.json`.
+**Equivalent to**:
+```bash
+supabase gen types typescript --linked > src/lib/database.types.ts
+```

@@ -481,4 +481,59 @@ A security feature that requires users to click a link in their email before the
 
 ---
 
+---
+
+## Advanced Database Concepts
+
+### Database Indexes
+A data structure that speeds up SELECT queries on specific columns at the cost of slightly slower INSERT/UPDATE.
+
+**When to add**:
+- Columns frequently used in `WHERE` clauses
+- Foreign key columns
+- Columns used in `ORDER BY` or `JOIN`
+
+**Used in Radoro**:
+```sql
+create index tasks_user_id_idx on public.tasks(user_id);
+create index tasks_user_id_completed_idx on public.tasks(user_id, completed);
+```
+First index speeds up "get all my tasks". Second (composite) index speeds up "get my incomplete tasks".
+
+---
+
+### Cascading Deletes vs SET NULL
+
+**`on delete cascade`**:
+- When parent row is deleted, child rows are also deleted.
+- Example: `profiles.id` deleted → all `tasks` with that `user_id` deleted.
+
+**`on delete set null`**:
+- When parent row is deleted, child rows' foreign key is set to NULL.
+- Example: `tasks.id` deleted → `sessions.task_id` becomes NULL (history preserved).
+
+**Used in Radoro**:
+- `profiles → tasks`: CASCADE (deleting user removes their data)
+- `tasks → sessions`: SET NULL (history preserved even if task deleted)
+
+---
+
+### One-to-One vs One-to-Many
+
+**1:1 Pattern** (used for `settings`):
+- Same `id` as parent table, primary key + foreign key combined
+- Each user has exactly one settings row
+```sql
+id uuid primary key references public.profiles(id) on delete cascade
+```
+
+**1:Many Pattern** (used for `tasks`, `presets`, etc.):
+- Separate `user_id` foreign key column
+- Each user can have many rows
+```sql
+user_id uuid not null references public.profiles(id) on delete cascade
+```
+
+---
+
 ## More concepts will be added as the project progresses.
