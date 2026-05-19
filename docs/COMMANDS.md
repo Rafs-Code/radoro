@@ -355,3 +355,45 @@ git check-ignore -v <filename>
 git check-ignore -v .env.local
 # Output: .gitignore:13:*.local   .env.local
 ```
+
+---
+
+## 5. Database Migrations
+
+### Create a new migration file
+```powershell
+supabase migration new <migration_name>
+```
+**Purpose**: Generate a new SQL migration file with a timestamp prefix.
+**Example**:
+```powershell
+supabase migration new create_profiles_table
+# Creates: supabase/migrations/[TIMESTAMP]_create_profiles_table.sql
+```
+
+---
+
+### Apply migrations to remote database (manual)
+```powershell
+supabase db push
+```
+**Purpose**: Push all local migrations that haven't been applied to the remote (cloud) database.
+**When to use**: As an alternative to GitHub Integration auto-deploy, or when integration isn't set up.
+
+---
+
+### Apply migrations to local database (for local dev)
+```powershell
+supabase db reset
+```
+**Purpose**: Reset local Supabase database and re-apply all migrations from scratch.
+**Note**: Only used for local development with Docker — we don't use this in Radoro yet.
+
+---
+
+### Trigger empty commit (useful for re-triggering integrations)
+```bash
+git commit --allow-empty -m "chore: trigger deploy"
+git push
+```
+**Purpose**: Push a commit with no file changes. Useful for re-triggering CI/CD or webhooks.

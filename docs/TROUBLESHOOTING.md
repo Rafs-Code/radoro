@@ -230,3 +230,37 @@ None needed — the 404 is the expected response. The UI displays "✅ Supabase 
 - Real connection failures show: CORS errors, network errors, or 401/403 (auth errors).
 - Always interpret errors in the context of what the code is testing.
 
+---
+
+## Step 5: GitHub Integration Didn't Auto-Deploy Migration
+
+### Error / Behavior
+- Pushed migration file (`create_profiles_table.sql`) to GitHub `main` branch.
+- Expected: Supabase auto-deploys migration to cloud database.
+- Actual: Migration didn't deploy. Table `profiles` didn't appear in Table Editor even after 5+ minutes.
+
+### Context
+GitHub Integration was set up in Supabase, but with "Deploy to production" toggle initially OFF.
+
+### Cause (suspected)
+- "Deploy to production" toggle was OFF when migration was first pushed.
+- Toggle was enabled afterward, but Supabase didn't auto-trigger deploy for past commits.
+- Possibly need to push a new commit *after* enabling toggle for it to take effect.
+
+### Solution (Workaround)
+Manual deploy via CLI bypasses GitHub Integration entirely:
+```powershell
+supabase db push
+```
+
+This deployed the migration successfully and `profiles` table appeared in Table Editor.
+
+### Future Investigation
+- [ ] After enabling "Deploy to production" toggle + setting branch name to `main`, push a fresh commit to verify auto-deploy works.
+- [ ] Check Supabase Integrations docs for required setup details.
+- [ ] Investigate if Free Plan has limitations on auto-deploy.
+
+### Lesson Learned
+- Always verify integration settings (especially toggles) **before** pushing important changes.
+- Have a fallback strategy (manual push) when integrations don't work as expected.
+- Don't get stuck investigating issues — workaround first, deep-dive later.

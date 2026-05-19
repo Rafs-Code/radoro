@@ -99,11 +99,53 @@
 
 ---
 
-### Step 5: First Migration — Profiles Table
+### Step 5: First Database Migration — Profiles Table
+**Date**: [fill in tanggal hari ini]
+
+**What was done**:
+- Created first migration file via `supabase migration new create_profiles_table`
+- Wrote SQL for:
+  - `profiles` table with columns: id, username, language, theme, created_at, updated_at
+  - Foreign key relationship to `auth.users(id)` with CASCADE delete
+  - CHECK constraints for language ('en'/'id') and theme ('dark'/'light')
+  - Row Level Security (RLS) enabled
+  - 3 RLS policies: users can SELECT/INSERT/UPDATE only their own profile
+  - Trigger `on_auth_user_created` — auto-creates profile when user signs up
+  - Trigger `on_profile_updated` — auto-updates `updated_at` on every UPDATE
+- Attempted GitHub Integration auto-deploy (didn't work, see Troubleshooting)
+- Fallback: deployed migration manually via `supabase db push`
+- Verified profiles table appears in Supabase Dashboard Table Editor
+
+**Commands used**: See [COMMANDS.md → Section 5](./COMMANDS.md#5-database-migrations)
+
+**Files created/modified**:
+- `supabase/migrations/[TIMESTAMP]_create_profiles_table.sql` — first migration
+
+**Errors encountered**: See [TROUBLESHOOTING.md → Step 5](./TROUBLESHOOTING.md)
+- GitHub Integration didn't auto-deploy migration despite being connected
+- Workaround: manual `supabase db push`
+
+**Concepts introduced**: See [CONCEPTS.md](./CONCEPTS.md)
+- Database migrations
+- Row Level Security (RLS) policies
+- Postgres triggers & functions
+- Foreign key constraints
+- `auth.users` vs `public.profiles` separation
+
+**Outcome**:
+- ✅ First migration successfully deployed to Supabase cloud
+- ✅ profiles table created with RLS protection
+- ✅ Auto-create profile trigger ready for first signup
+- ⚠️ GitHub Integration auto-deploy not working yet (to be investigated later)
+
+---
+
+### Step 6: Auth Setup & TypeScript Types
 **Status**: 🚧 Next up
 
 [Will be filled in as we progress]
 
 - [x] Step 3: ESLint, Prettier, Git ✅
 - [x] Step 4: Supabase project & CLI ✅
-- [ ] Step 5: Database schema (first migration) ← **NEXT**
+- [x] Step 5: Database schema (first migration) ✅
+- [ ] Step 6: Supabase JS client integration & Auth ← **NEXT**

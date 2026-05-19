@@ -296,3 +296,88 @@ Special files for storing environment variables:
 - `.env.example` — template with empty values, **committed** for documentation
 
 ## More concepts will be added as the project progresses.
+
+---
+
+## Database Schema Management
+
+### Migrations
+SQL files that record incremental changes to database schema. Run in chronological order based on timestamp prefix.
+
+**Why migrations instead of editing schema directly?**
+- ✅ Version-controlled (Git history of every change)
+- ✅ Reproducible (apply same migrations on dev/staging/prod)
+- ✅ Reversible (write down-migrations if needed)
+- ✅ Team-friendly (everyone applies same schema changes)
+
+**File naming convention**:
+[YYYYMMDDHHMMSS]_[descriptive_name].sql
+20260518232325_create_profiles_table.sql
+---
+
+### Schema as Code
+Workflow where database schema is treated as source code:
+1. Schema changes written as SQL migration files
+2. Files committed to Git
+3. CI/CD or integration auto-applies migrations to environments
+
+**Used in Radoro**: GitHub Integration (planned) / `supabase db push` (current)
+
+---
+
+## PostgreSQL Concepts
+
+### Row Level Security (RLS)
+A PostgreSQL feature that restricts which rows a user can SELECT/INSERT/UPDATE/DELETE based on policies.
+
+**Without RLS**: Anyone with the anon/publishable key can access all rows in a table.
+**With RLS**: Each user can only access rows that match defined policies.
+
+**Example policy**:
+```sql
+create policy "Users can view own profile"
+  on public.profiles
+  for select
+  using (auth.uid() = id);
+```
+Reads: "When user does SELECT on profiles table, only show rows where `auth.uid()` (current user's ID) matches the row's `id` column."
+
+---
+
+### RLS Policy Components
+- `for [operation]` — SELECT, INSERT, UPDATE, DELETE, or ALL
+- `using (expression)` — Filter for SELECT/UPDATE/DELETE (which rows are visible/affected)
+- `with check (expression)` — Filter for INSERT/UPDATE (which rows can be created/modified)
+
+---
+
+### Foreign Keys
+A constraint that ensures a column's value exists in another table.
+
+**Example**:
+```sql
+create table profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  ...
+);
+```
+- `references auth.users(id)` — profiles.id must exist in auth.users.id
+- `on delete cascade` — if auth.users row is deleted, matching profiles row is auto-deleted
+
+---
+
+### Triggers
+Database functions that auto-execute on table events (INSERT/UPDATE/DELETE).
+
+**Used in Radoro**:
+1. `on_auth_user_created` — auto-creates profile when new user signs up
+2. `on_profile_updated` — auto-updates `updated_at` timestamp on profile changes
+
+**Why triggers?**
+- ✅ Logic stays in database (works even if app skips the step)
+- ✅ Single source of truth
+- ✅ Eliminates race conditions
+
+---
+
+## More concepts will be added as the project progresses.
