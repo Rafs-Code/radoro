@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from './contexts/useAuth'
+import { Timer } from './features/timer/components/Timer'
+import { useSettings } from './features/timer/hooks/useSettings'
 
 function App() {
   const { user, loading, signUp, signIn, signOut } = useAuth()
@@ -7,6 +9,9 @@ function App() {
   const [password, setPassword] = useState('')
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [message, setMessage] = useState('')
+
+  // Load user settings into timer store
+  useSettings()
 
   if (loading) {
     return (
@@ -25,7 +30,7 @@ function App() {
       if (error) {
         setMessage(`❌ ${error.message}`)
       } else {
-        setMessage('✅ Sign up successful! Check your email to confirm.')
+        setMessage('✅ Sign up successful!')
       }
     } else {
       const { error } = await signIn(email, password)
@@ -35,30 +40,29 @@ function App() {
     }
   }
 
-  // Logged in view
+  // Logged in view — show timer
   if (user) {
     return (
       <div className="min-h-screen bg-purple-950 text-white flex flex-col items-center justify-center p-4">
-        <h1 className="text-5xl font-bold mb-4">🍅 Radoro</h1>
-        <p className="text-purple-300 text-lg mb-8">Welcome back!</p>
-
-        <div className="bg-purple-900 rounded-lg p-6 mb-4 max-w-md w-full">
-          <p className="text-sm text-purple-300">Logged in as:</p>
-          <p className="text-lg font-semibold mb-2">{user.email}</p>
-          <p className="text-xs text-purple-400">User ID: {user.id}</p>
+        <div className="absolute top-4 right-4 flex items-center gap-3">
+          <span className="text-sm text-purple-300">{user.email}</span>
+          <button
+            onClick={signOut}
+            className="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-sm transition"
+          >
+            Sign Out
+          </button>
         </div>
 
-        <button
-          onClick={signOut}
-          className="px-6 py-3 bg-red-600 hover:bg-red-500 rounded-lg transition"
-        >
-          Sign Out
-        </button>
+        <h1 className="text-5xl font-bold mb-2">🍅 Radoro</h1>
+        <p className="text-purple-300 text-lg mb-12">Your focus companion</p>
+
+        <Timer />
       </div>
     )
   }
 
-  // Not logged in view
+  // Not logged in — sign in/up form
   return (
     <div className="min-h-screen bg-purple-950 text-white flex flex-col items-center justify-center p-4">
       <h1 className="text-5xl font-bold mb-4">🍅 Radoro</h1>
@@ -101,16 +105,16 @@ function App() {
           {mode === 'signup' ? 'Create Account' : 'Sign In'}
         </button>
 
-        {message && (
-          <p className="mt-4 text-center text-sm">{message}</p>
-        )}
+        {message && <p className="mt-4 text-center text-sm">{message}</p>}
 
         <button
           type="button"
           onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
           className="w-full mt-4 text-purple-300 hover:text-white text-sm"
         >
-          {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+          {mode === 'signup'
+            ? 'Already have an account? Sign in'
+            : "Don't have an account? Sign up"}
         </button>
       </form>
     </div>

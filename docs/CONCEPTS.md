@@ -536,4 +536,87 @@ user_id uuid not null references public.profiles(id) on delete cascade
 
 ---
 
+---
+
+## State Management
+
+### Zustand
+A lightweight state management library for React. Simpler than Redux, more performant than Context for frequently-updating state.
+
+**Pattern**:
+```tsx
+import { create } from 'zustand'
+
+type State = { count: number; increment: () => void }
+
+const useStore = create<State>((set) => ({
+  count: 0,
+  increment: () => set((s) => ({ count: s.count + 1 })),
+}))
+```
+
+**Usage in components**:
+```tsx
+const count = useStore((s) => s.count)
+const increment = useStore((s) => s.increment)
+```
+
+---
+
+### Selector Pattern
+Zustand stores accept selector functions to subscribe to specific state slices. Only when the selected value changes does the component re-render.
+
+```tsx
+// Re-renders on ANY store change (bad)
+const { count, name, age } = useStore()
+
+// Re-renders ONLY when count changes (good)
+const count = useStore((s) => s.count)
+```
+
+This is critical for performance with timer-like state that updates every second.
+
+---
+
+### Context vs Zustand: When to Use What
+
+| Use Case | Tool |
+|---|---|
+| Auth state (user, session) | React Context |
+| Theme (light/dark) | React Context |
+| Language/locale | React Context |
+| Timer countdown (updates every second) | **Zustand** |
+| Form state (per-component) | useState |
+| Server-state cache | React Query / SWR (not used in Radoro) |
+
+**Rule of thumb**:
+- Context for state that **rarely updates** but is **widely used**
+- Zustand for state that **frequently updates** and needs fine-grained subscriptions
+
+---
+
+## Project Structure
+
+### Feature-Based Folder Layout
+Instead of grouping by file type (components/, hooks/, etc.), group by feature:
+src/
+├── features/
+│   ├── timer/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   └── store/
+│   ├── tasks/
+│   └── settings/
+├── components/  ← shared UI
+├── hooks/       ← shared hooks
+└── lib/         ← external services & utilities
+
+**Benefits**:
+- ✅ Related code lives together (easier to find/refactor)
+- ✅ Scales well as project grows
+- ✅ Easier to onboard new developers
+- ✅ Industry standard (used by Linear, Notion, Vercel)
+
+---
+
 ## More concepts will be added as the project progresses.

@@ -235,7 +235,55 @@
 
 ---
 
-### Step 8: Folder Structure + Timer UI
+### Step 8: Folder Structure + Timer UI (Part 1)
+**Date**: [tanggal hari ini]
+
+**What was done**:
+- Restructured `src/` to feature-based folder layout:
+  - `src/features/timer/{components, hooks, store}`
+  - `src/components/` (shared)
+  - `src/hooks/` (shared)
+- Installed Zustand for performant state management
+- Created Zustand store `timerStore.ts` with:
+  - State: mode, status, secondsLeft, plannedDuration, workSessionsCompleted, settings
+  - Actions: start, pause, reset, skip, tick, setSettings
+  - Helper functions for mode duration and next mode logic
+- Built `Timer.tsx` component with:
+  - SVG circular progress ring
+  - Mode badge (Focus / Short Break / Long Break) with color coding
+  - Start/Pause/Resume/Reset/Skip buttons
+  - Session counter
+  - Auto-updating document title (e.g., `24:59 - Focus | Radoro`)
+- Created `useSettings` hook to load user settings from Supabase into timer store
+- Updated `App.tsx` to integrate Timer component and useSettings hook
+- Tested full timer flow: start, pause, resume, reset, skip, mode switching, auto long break every 4 work sessions
+
+**Commands used**: See [COMMANDS.md → Section 8](./COMMANDS.md#8-timer-feature)
+
+**Files created/modified**:
+- `src/features/timer/store/timerStore.ts` — Zustand timer store
+- `src/features/timer/components/Timer.tsx` — Timer UI component
+- `src/features/timer/hooks/useSettings.ts` — Hook to load settings
+- `src/App.tsx` — Wired up Timer + useSettings
+- `package.json` — Added zustand dependency
+
+**Concepts introduced**: See [CONCEPTS.md](./CONCEPTS.md)
+- Feature-based folder structure
+- Zustand state management
+- Selector pattern for fine-grained re-renders
+- React Context vs Zustand (when to use which)
+- Document title manipulation
+- SVG circular progress with stroke-dasharray
+
+**Outcome**:
+- ✅ Timer fully working with all states (idle, running, paused)
+- ✅ Mode switching with auto long break logic
+- ✅ Tab title shows live countdown
+- ✅ Settings loaded from Supabase per user
+
+---
+
+### Step 8.8: Save Sessions to Database
 **Status**: 🚧 Next up
 
 [Will be filled in as we progress]
@@ -245,4 +293,7 @@
 - [x] Step 5: Database schema (first migration) ✅
 - [x] Step 6: Supabase JS client integration & Auth ✅
 - [x] Step 7: Complete database schema ✅
-- [ ] Step 8: Folder structure + Timer UI ← **NEXT**
+- [x] Step 8: Folder structure + Timer UI ✅
+- [ ] Step 8.8-9: Save sessions to database ← **NEXT**
+- [ ] Step 9: PWA setup
+- [ ] Step 10: Deploy to Vercel

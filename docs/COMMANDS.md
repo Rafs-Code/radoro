@@ -437,3 +437,13 @@ pnpm types:gen
 ```bash
 supabase gen types typescript --linked > src/lib/database.types.ts
 ```
+
+---
+
+## 8. Timer Feature
+
+### Install Zustand
+```bash
+pnpm add zustand
+```
+**Purpose**: Lightweight state management library, used for timer state (frequent updates).
